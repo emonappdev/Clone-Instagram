@@ -78,6 +78,7 @@
         android:padding="8dp">
 
         <ImageView
+            android:id="@+id/like_icone"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_like" />
@@ -88,9 +89,11 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:gravity="center"
-            android:text="2006" />
+            android:text="2006"
+            android:textStyle="bold" />
 
         <ImageView
+            android:id="@+id/ic_comment"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="12dp"
@@ -102,7 +105,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:gravity="center"
-            android:text="20" />
+            android:text="20"
+            android:textStyle="bold" />
 
         <ImageView
             android:layout_width="24dp"
@@ -116,9 +120,11 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:gravity="center"
-            android:text="6" />
+            android:text="6"
+            android:textStyle="bold" />
 
         <ImageView
+            android:id="@+id/Share"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="12dp"
@@ -130,7 +136,16 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:gravity="center"
-            android:text="1" />
+            android:text="1"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="65dp"
+            android:src="@drawable/save" />
+
+
     </LinearLayout>
 
     <!-- Caption -->
@@ -141,8 +156,8 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="Liked by username and 50 others"
-        android:textSize="13sp"
-        android:textStyle="bold" />
+        android:textColor="#000"
+        android:textSize="13sp" />
 
     <TextView
         android:id="@+id/postTime"
@@ -151,7 +166,7 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="Liked by username and 50 others"
-        android:textSize="13sp"
-        android:textStyle="bold" />
+        android:textColor="#000"
+        android:textSize="13sp" />
 
 </LinearLayout>

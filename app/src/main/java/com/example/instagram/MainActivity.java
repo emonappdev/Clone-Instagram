@@ -1,6 +1,8 @@
 package com.example.instagram;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -96,8 +98,7 @@ public class MainActivity extends AppCompatActivity {
                     drawerLayout.closeDrawer(GravityCompat.START);
                 }
                 return true;
-
-
+                
             }
         });
         //------------------------------------------------------------------------------------------------------------
@@ -121,11 +122,24 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if (item.getItemId() == R.id.search) {
 
-                    Toast.makeText(MainActivity.this, "This is search", Toast.LENGTH_SHORT).show();
-
+                    FragmentManager fManager = getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frameLayout, new SearchFragment());
+                   // materialToolbar.setVisibility(View.GONE);
+                    fragmentTransaction.commit();
 
                 } else if (item.getItemId() == R.id.post) {
-                    Toast.makeText(MainActivity.this, "This is post", Toast.LENGTH_SHORT).show();
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(cameraIntent);
+                    }
+
+                } else if (item.getItemId() == R.id.profile) {
+
+                    FragmentManager fManager = getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frameLayout, new ProfileFragment());
+                    fragmentTransaction.commit();
 
                 }
                 return true;

@@ -8,6 +8,7 @@
     android:background="#FFFFFF"
     tools:context=".MainActivity">
 
+
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
@@ -33,7 +34,7 @@
                     app:menu="@menu/toolber_items"
                     app:navigationIcon="@drawable/menu">
 
-                    <!-- LinearLayout দিয়ে ইমেজ ডান পাশে রাখা -->
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

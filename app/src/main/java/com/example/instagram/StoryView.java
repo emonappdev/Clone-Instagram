@@ -50,13 +50,11 @@ public class StoryView extends Fragment {
             Picasso.get().load(imageUrl).into(storyImage);
         }
 
-        // 3 সেকেন্ড পরে fragment remove
+
         new Handler().postDelayed(() -> {
-            if (getParentFragmentManager() != null) {
-                getParentFragmentManager().beginTransaction()
-                        .remove(StoryView.this)
-                        .commit();
-            }
+            getParentFragmentManager().beginTransaction()
+                    .remove(StoryView.this)
+                    .commit();
         }, 3000);
 
         return myView;

@@ -1,38 +1,36 @@
 package com.example.instagram;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
+
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -88,6 +86,7 @@ public class HomeFragment extends Fragment {
     }
 
 
+    //------------------------------------------Story ----------------------------------------------------------------------
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.myViewHolder> {
 
         public class myViewHolder extends RecyclerView.ViewHolder {
@@ -130,13 +129,13 @@ public class HomeFragment extends Fragment {
                     .load(story_photo)
                     .into(holder.storyPhoto);
 
+
+            // -----------------   Story Photo Click -----------------------------------------
             holder.storyPhoto.setOnClickListener(v -> {
                 String imageUrl = arrayListStory.get(position).get("story_photo");
 
-                // StoryFullScreenFragment তৈরি
                 StoryView fragment = StoryView.newInstance(imageUrl);
 
-                // Fullscreen overlay হিসেবে add করা
                 ((MainActivity) v.getContext()).getSupportFragmentManager()
                         .beginTransaction()
                         .add(android.R.id.content, fragment)
@@ -158,12 +157,13 @@ public class HomeFragment extends Fragment {
     // ------------------------------------------------------------------------------------------------------------------
 
 
+    //-------------------------------------------Post -------------------------------------------------------------------
     public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.myViewHolder> {
 
         public class myViewHolder extends RecyclerView.ViewHolder {
 
             CircleImageView postProfile;
-            ImageView postImage;
+            ImageView postImage, Share, like_icone, ic_comment;
             TextView postUsername, like, comment, repost, share, postCaption, postTime;
 
             public myViewHolder(@NonNull View itemView) {
@@ -172,9 +172,12 @@ public class HomeFragment extends Fragment {
                 postImage = itemView.findViewById(R.id.postImage);
                 postUsername = itemView.findViewById(R.id.postUsername);
                 like = itemView.findViewById(R.id.like);
+                like_icone = itemView.findViewById(R.id.like_icone);
                 comment = itemView.findViewById(R.id.comment);
+                ic_comment = itemView.findViewById(R.id.ic_comment);
                 repost = itemView.findViewById(R.id.repost);
                 share = itemView.findViewById(R.id.share);
+                Share = itemView.findViewById(R.id.Share);
                 postCaption = itemView.findViewById(R.id.postCaption);
                 postTime = itemView.findViewById(R.id.postTime);
 
@@ -212,6 +215,7 @@ public class HomeFragment extends Fragment {
             holder.postCaption.setText(user_caption);
             holder.postTime.setText(user_time);
 
+            // ----------------------- Post Profile ----------------------------------------
             Picasso.get()
                     .load(user_profile)
                     .into(holder.postProfile);
@@ -219,6 +223,62 @@ public class HomeFragment extends Fragment {
             Picasso.get()
                     .load(user_image)
                     .into(holder.postImage);
+
+
+            //  -------------------------- When Click Share Icone --------------------------
+
+            holder.Share.setOnClickListener(v -> {
+
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");   // শুধু share menu দেখাতে
+
+                intent.putExtra(Intent.EXTRA_TEXT, "");  // কিছু পাঠানোর দরকার নেই
+
+                Intent chooser = Intent.createChooser(intent, "Share via");
+                v.getContext().startActivity(chooser);
+
+            });
+
+            // ----------------------When  Click Like Icone -----------------------------
+            holder.like_icone.setImageResource(R.drawable.ic_heart_outline);
+            holder.like_icone.setTag("unliked");
+
+            // click listener
+            holder.like_icone.setOnClickListener(v -> {
+                if (holder.like_icone.getTag().equals("unliked")) {
+                    holder.like_icone.setImageResource(R.drawable.ic_heart_filled);
+                    holder.like_icone.setTag("liked");
+                } else {
+                    holder.like_icone.setImageResource(R.drawable.ic_heart_outline);
+                    holder.like_icone.setTag("unliked");
+                }
+            });
+
+
+            // -------------------------When Click  Comment Icone-----------------------------------------
+
+            holder.ic_comment.setOnClickListener(v -> {
+
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(v.getContext());
+                View sheetView = LayoutInflater.from(v.getContext()).inflate(R.layout.layout_comment, null);
+                bottomSheetDialog.setContentView(sheetView);
+
+                EditText commentInput = sheetView.findViewById(R.id.commentInput);
+                Button btnPost = sheetView.findViewById(R.id.btnPostComment);
+
+                btnPost.setOnClickListener(view -> {
+                    String commentText = commentInput.getText().toString().trim();
+                    if (!commentText.isEmpty()) {
+                        Toast.makeText(v.getContext(), "Comment Send: " + commentText, Toast.LENGTH_SHORT).show();
+                        bottomSheetDialog.dismiss();
+                    } else {
+                        Toast.makeText(v.getContext(), "Write something first!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                bottomSheetDialog.show();
+            });
+
 
         }
 
@@ -230,14 +290,14 @@ public class HomeFragment extends Fragment {
     }
 
 
-    // -  ----     -------------           -------------------------          --------------------------------------------------------
+    // -  ----     -------------       -----
 
 
     private void loadStory() {
 
         String url = "https://emondev.xyz/socialmedia/storyhome.json";
-
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(JSONArray response) {
 
@@ -251,11 +311,9 @@ public class HomeFragment extends Fragment {
                         String user_name = jsonObject.getString("user_name");
                         String story_photo = jsonObject.getString("story_photo");
 
-
                         hashMapStory = new HashMap<>();
                         hashMapStory.put("user_name", user_name);
                         hashMapStory.put("story_photo", story_photo);
-
 
                         arrayListStory.add(hashMapStory);
 
@@ -274,9 +332,8 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getContext()));
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         requestQueue.add(jsonArrayRequest);
-
     }
 
 
@@ -288,6 +345,7 @@ public class HomeFragment extends Fragment {
         String url = "https://emondev.xyz/socialmedia/posthome.json";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(JSONArray response) {
 
@@ -320,7 +378,6 @@ public class HomeFragment extends Fragment {
                         hashMapPost.put("user_caption", user_caption);
                         hashMapPost.put("user_time", user_time);
 
-
                         arrayListPost.add(hashMapPost);
 
                     } catch (JSONException e) {
@@ -338,7 +395,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getContext()));
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         requestQueue.add(jsonArrayRequest);
 
     }
